@@ -7,53 +7,62 @@
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
 
-    <UserControl>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
+    <Grid>
 
-            <Expander Grid.Column="0" 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Expander Grid.Column="0" 
                       IsExpanded="True"
-                      ExpandDirection="Up">
-                <Expander.LayoutTransform>
-                    <RotateTransform Angle="90"/>
-                </Expander.LayoutTransform>
+                      ExpandDirection="Up" 
+                      FontSize="16">
 
-                <Expander.Header >
-                    Содержание
-                </Expander.Header>
-                <TextBlock FontSize="18.667" >
-                    <TextBlock.LayoutTransform>
-                    <RotateTransform Angle="-90"/>
-                </TextBlock.LayoutTransform>
-                    <TreeView Name="MainTreeView" ItemsSource="{Binding Entities}" SelectedValuePath="{Binding SelectedEntity}"
-                              Grid.Row="0" Grid.Column="0" 
-                              SelectedItemChanged="TreeView_OnSelectedItemChanged">
-    <TreeView.Resources>
-        <HierarchicalDataTemplate DataType="{x:Type local:MarkupEntity}" ItemsSource="{Binding Children}">
-            <TextBlock Text="{Binding Path=Description}" />
-        </HierarchicalDataTemplate>
-        <DataTemplate DataType="{x:Type local:Document}" >
-            <TextBlock Text="{Binding Path=Description}" />
-        </DataTemplate>
-    </TreeView.Resources>
-                    </TreeView>
-                </TextBlock>
-            </Expander>
+            <Expander.LayoutTransform>
+                <RotateTransform Angle="90"/>
+            </Expander.LayoutTransform>
+
+            <Expander.Header>
+                <TextBlock Text="Содержание" />
+            </Expander.Header>
+
+            <TreeView Name="MainTreeView" 
+                          ItemsSource="{Binding Entities}" 
+                          SelectedValuePath="{Binding SelectedEntity}"
+                          SelectedItemChanged="TreeView_OnSelectedItemChanged"
+                          Grid.Row="0" 
+                          Grid.Column="0" 
+                          MinWidth="200"
+                          VerticalAlignment="Bottom">
+
+                <TreeView.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </TreeView.LayoutTransform>
+
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type local:MarkupEntity}" 
+                                                  ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Path=Description}" />
+                    </HierarchicalDataTemplate>
+                    <DataTemplate DataType="{x:Type local:Document}" >
+                        <TextBlock Text="{Binding Path=Description}" />
+                    </DataTemplate>
+                </TreeView.Resources>
+
+            </TreeView>
+        </Expander>
 
 
-            <FlowDocumentScrollViewer Name="docViewer"
+        <FlowDocumentScrollViewer Name="docViewer"
                                       Grid.Column="1"
                                       >
-                <FlowDocument Name="mainDocument"
+            <FlowDocument Name="mainDocument"
                           TextAlignment="Center"
                           Foreground="Black"
                           Background="White"/>
-            </FlowDocumentScrollViewer>
+        </FlowDocumentScrollViewer>
 
-        </Grid>
-    </UserControl>
-
+    </Grid>
+    
 </UserControl>
