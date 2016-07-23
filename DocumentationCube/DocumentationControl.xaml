@@ -27,7 +27,13 @@
                 <TextBlock Text="Содержание" />
             </Expander.Header>
 
-            <TreeView Name="MainTreeView" 
+            <StackPanel>
+                <StackPanel.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </StackPanel.LayoutTransform>
+
+                <TextBlock Text="Содержание" />
+                <TreeView Name="MainTreeView" 
                           ItemsSource="{Binding Entities}" 
                           SelectedValuePath="{Binding SelectedEntity}"
                           SelectedItemChanged="TreeView_OnSelectedItemChanged"
@@ -35,10 +41,6 @@
                           Grid.Column="0" 
                           MinWidth="200"
                           VerticalAlignment="Bottom">
-
-                <TreeView.LayoutTransform>
-                    <RotateTransform Angle="-90" />
-                </TreeView.LayoutTransform>
 
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type local:MarkupEntity}" 
@@ -50,7 +52,8 @@
                     </DataTemplate>
                 </TreeView.Resources>
 
-            </TreeView>
+                </TreeView>
+            </StackPanel>
         </Expander>
 
 
@@ -60,7 +63,8 @@
             <FlowDocument Name="mainDocument"
                           TextAlignment="Center"
                           Foreground="Black"
-                          Background="White"/>
+                          Background="White"
+                          />
         </FlowDocumentScrollViewer>
 
     </Grid>

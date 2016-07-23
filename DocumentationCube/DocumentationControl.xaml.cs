@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace DocumentationCube
         public DocumentationControl()
         {
             InitializeComponent();
-            
+            AddHandler(Hyperlink.RequestNavigateEvent, new RoutedEventHandler(OnNavigationRequest));
             MainTreeView.ItemsSource = Entities;
         }
 
@@ -64,6 +65,27 @@ namespace DocumentationCube
                 LoadDocument(doc.FileName);
             }
             catch (Exception) { }
+        }
+
+        public void OnNavigationRequest(object sender, RoutedEventArgs e)
+        {
+            //var paginator = ((IDocumentPaginatorSource)mainDocument).DocumentPaginator as DynamicDocumentPaginator;
+            //var position = paginator.GetPagePosition(paginator..GetPage(reader.PageNumber - 1)) as TextPointer;
+            //bookmark = position.Paragraph;
+            //bookmark.BringIntoView();
+
+            Hyperlink link = e.OriginalSource as Hyperlink; 
+            string uri = link.NavigateUri.ToString();
+
+            if (uri.Contains("http"))
+            {
+                Process.Start(uri);
+            }
+            else
+            {
+                LoadDocument(uri);
+            }
+            
         }
     }
 }
