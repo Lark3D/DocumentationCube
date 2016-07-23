@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+  <SubSection>
+    <Name>frst</Name>
+    <Description>Секция 1</Description>
+    
+    <Document>
+      <Name>frst</Name>
+      <Description>Документище</Description>
+      <FileName>Docs/Sub1/doc1.rtf</FileName>
+    </Document>
+  </SubSection>
+
+  <SubSection>
+    <Name>frst</Name>
+    <Description>Вторая секция</Description>
+    
+    <Document>
+      <Name>frst</Name>
+      <Description>Отличный док</Description>
+      <FileName>Docs/Sub2/doc2.rtf</FileName>
+    </Document>
+
+    <Document>
+      <Name>frst</Name>
+      <Description>New Document</Description>
+      <FileName>Docs/Sub2/doc3.rtf</FileName>
+    </Document>
+  </SubSection>
+
+  <Document>
+    <Name>frst</Name>
+    <Description>Второй</Description>
+    <FileName>Docs/doc2.rtf</FileName>
+  </Document>
+
+  <Document>
+    <Name>frst</Name>
+    <Description>Третий документ</Description>
+    <FileName>Docs/doc3.rtf</FileName>
+  </Document>
+</Documentation>
