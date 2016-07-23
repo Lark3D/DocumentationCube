@@ -52,7 +52,7 @@ namespace DocumentationCube
                 {
                     newEntity = new Document();
                     Document newDocument = newEntity as Document;
-                    newDocument.FileName = (string)xEntity.Element("FileName");
+                    newDocument.FileName = (string)xEntity.Attribute("FileName");
                 }
                 else if (xEntity.Name == "SubSection")
                 {
@@ -64,8 +64,8 @@ namespace DocumentationCube
                 {
                     newEntity = new DocumentationEntity();
                 }
-                newEntity.Name = (string)xEntity.Element("Name");
-                newEntity.Description = (string)xEntity.Element("Description");
+                newEntity.Name = (string)xEntity.Attribute("Name");
+                newEntity.Description = (string)xEntity.Attribute("Description");
                 newList.Add(newEntity);
             }
             return newList;

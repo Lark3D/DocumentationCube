@@ -1,42 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Documentation>
-  <SubSection>
-    <Name>frst</Name>
-    <Description>Секция 1</Description>
-    
-    <Document>
-      <Name>frst</Name>
-      <Description>Документище</Description>
-      <FileName>Docs/Sub1/doc1.rtf</FileName>
-    </Document>
+  <SubSection Name="frst" Description="Секция 1">    
+    <Document Name="frst" Description="Документище" FileName="Docs/Sub1/doc1.rtf" />
   </SubSection>
 
-  <SubSection>
-    <Name>frst</Name>
-    <Description>Вторая секция</Description>
-    
-    <Document>
-      <Name>frst</Name>
-      <Description>Отличный док</Description>
-      <FileName>Docs/Sub2/doc2.rtf</FileName>
-    </Document>
-
-    <Document>
-      <Name>frst</Name>
-      <Description>New Document</Description>
-      <FileName>Docs/Sub2/doc3.rtf</FileName>
-    </Document>
+  <SubSection Name="frst" Description="Вторая секция">
+    <Document Name="frst" Description="Отличный док" FileName="Docs/Sub2/doc2.rtf" />
+    <Document Name="frst" Description="NewDoc" FileName="Docs/Sub2/doc3.rtf" />
   </SubSection>
 
-  <Document>
-    <Name>frst</Name>
-    <Description>Второй</Description>
-    <FileName>Docs/doc2.rtf</FileName>
-  </Document>
-
-  <Document>
-    <Name>frst</Name>
-    <Description>Третий документ</Description>
-    <FileName>Docs/doc3.rtf</FileName>
-  </Document>
+  <Document Name="frst" Description="Второй" FileName="Docs/doc2.rtf" />
+  <Document Name="frst" Description="Третий документ" FileName="Docs/doc3.rtf" />
 </Documentation>
