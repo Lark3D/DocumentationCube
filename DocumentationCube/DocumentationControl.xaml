@@ -33,10 +33,10 @@
                 </StackPanel.LayoutTransform>
 
                 <TextBlock Text="Содержание" />
-                <TreeView Name="MainTreeView" 
+                <TreeView Name="contentsTreeView" 
                           ItemsSource="{Binding Entities}" 
                           SelectedValuePath="{Binding SelectedEntity}"
-                          SelectedItemChanged="TreeView_OnSelectedItemChanged"
+                          SelectedItemChanged="ContentsSelectedItemChanged"
                           Grid.Row="0" 
                           Grid.Column="0" 
                           MinWidth="200"
@@ -57,7 +57,7 @@
         </Expander>
 
 
-        <FlowDocumentScrollViewer Name="docViewer"
+        <FlowDocumentScrollViewer Name="documentViewer"
                                       Grid.Column="1"
                                       >
             <FlowDocument Name="mainDocument"

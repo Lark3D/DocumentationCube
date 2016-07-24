@@ -24,9 +24,7 @@ namespace DemoCube
         public MainWindow()
         {
             InitializeComponent();
-            Cube.FileName = "Docs.xml";
-            //DocumentationCube.FileName = "Docs.xml";
-            //Docs.LoadDocument();
+            Docs.FileName = "Docs.xml";
         }
 
         

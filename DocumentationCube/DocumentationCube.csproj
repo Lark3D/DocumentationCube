@@ -51,7 +51,6 @@
     <Compile Include="DocumentationControl.xaml.cs">
       <DependentUpon>DocumentationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DocumentationCube.cs" />
     <Compile Include="DocumentationModel.cs" />
     <Compile Include="XmlOperator.cs" />
   </ItemGroup>

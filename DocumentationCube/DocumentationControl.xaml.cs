@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,60 +21,88 @@ namespace DocumentationCube
     /// <summary>
     /// Логика взаимодействия для DocumentationControl.xaml
     /// </summary>
-    public partial class DocumentationControl : UserControl
+    public partial class DocumentationControl : UserControl, INotifyPropertyChanged
     {
+        #region Fields
+        private Documentation documentation;
+        private string _fileName;
+        #endregion
+
         public DocumentationControl()
         {
             InitializeComponent();
             AddHandler(Hyperlink.RequestNavigateEvent, new RoutedEventHandler(OnNavigationRequest));
-            MainTreeView.ItemsSource = Entities;
+            this.PropertyChanged += OnFileNameChanged;
         }
 
-        public void LoadDocument(string filename)
-        {
-            using (FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read))
-            {
-                var content = new TextRange(mainDocument.ContentStart, mainDocument.ContentEnd);
-
-                if (content.CanLoad(DataFormats.Rtf))
-                {
-                    content.Load(fs, DataFormats.Rtf);
-                }
-
-                docViewer.Document = mainDocument;
-            }
-        }
-
+        #region Properties
         public List<DocumentationEntity> Entities
         {
             get
             {
-                return XmlOperator.LoadFromXml(@"Docs.xml").Children;
+                if ((documentation != null) && (documentation.Children != null))
+                {
+                    return documentation.Children;
+                }
+                else return null;
             }
         }
 
+        public string FileName
+        {
+            get { return _fileName; }
+            set
+            {
+                if (File.Exists(value))
+                {
+                    _fileName = value;
+                    RaisePropertyChanged("FileName");
+                }
+            }
+        }
+        #endregion
 
-        public string FileName { get; set; }
+        #region Methods
+        private void LoadDocumentation()
+        {
+            documentation = XmlOperator.LoadFromXml(_fileName);
+        }
 
-        public DocumentationEntity SelectedEntity { get; set; }
+        private void ShowDocument(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                using (FileStream fs = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    var content = new TextRange(mainDocument.ContentStart, mainDocument.ContentEnd);
 
-        private void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+                    if (content.CanLoad(DataFormats.Rtf))
+                    {
+                        content.Load(fs, DataFormats.Rtf);
+                    }
+
+                    documentViewer.Document = mainDocument;
+                }
+            }
+        }
+        #endregion
+
+        #region Event handlers
+        private void ContentsSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             try
             {
-                Document doc = e.NewValue as Document;
-                LoadDocument(doc.FileName);
+                if (e.NewValue is Document)
+                {
+                    Document doc = e.NewValue as Document;
+                    ShowDocument(doc.FileName);
+                }
             }
             catch (Exception) { }
         }
 
-        public void OnNavigationRequest(object sender, RoutedEventArgs e)
+        private void OnNavigationRequest(object sender, RoutedEventArgs e)
         {
-            //var paginator = ((IDocumentPaginatorSource)mainDocument).DocumentPaginator as DynamicDocumentPaginator;
-            //var position = paginator.GetPagePosition(paginator..GetPage(reader.PageNumber - 1)) as TextPointer;
-            //bookmark = position.Paragraph;
-            //bookmark.BringIntoView();
-
             Hyperlink link = e.OriginalSource as Hyperlink; 
             string uri = link.NavigateUri.ToString();
 
@@ -83,9 +112,30 @@ namespace DocumentationCube
             }
             else
             {
-                LoadDocument(uri);
+                ShowDocument(uri);
             }
-            
         }
+
+        private void OnFileNameChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "FileName")
+            {
+                LoadDocumentation();
+                contentsTreeView.ItemsSource = Entities;
+            }
+        }
+        #endregion
+
+        #region INotifyPropertyChanded
+        private void RaisePropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
     }
 }
