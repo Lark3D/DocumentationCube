@@ -38,18 +38,7 @@
                 </StackPanel.LayoutTransform>
 
                 <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
 
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
-                <TextBlock Text="Содержание" />
                 <TreeView Name="contentsTreeView" 
                           ItemsSource="{Binding Entities}" 
                           SelectedValuePath="{Binding SelectedEntity}"
@@ -81,15 +70,14 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="BackButton" Grid.Column="0" Content="Назад" Click="BackButton_Click"/>
-            <TextBlock Grid.Column="1" Text="FileDescription" FontSize="20" FontFamily="Times New Roman" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding ElementName=contentsTreeView, Path=SelectedItem.Description}" FontSize="20" HorizontalAlignment="Center"/>
             <Button x:Name="ForwardButton" Grid.Column="2" Content="Вперед" Click="ForwardButton_Click"/>
         </Grid>
 
 
             <FlowDocumentScrollViewer Name="documentViewer"
                                       Grid.Column="1" Grid.Row="1"
-                                      IsToolBarVisible="True"
-                                      Zoom="150">
+                                      >
             <FlowDocument Name="mainDocument"
                           TextAlignment="Center"
                           Foreground="Black"

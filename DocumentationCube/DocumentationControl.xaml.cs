@@ -94,7 +94,6 @@ namespace DocumentationCube
                 {
                     previousFiles.Push(currentFile);
                 }
-                
                 currentFile = fileName;
             }
         }
