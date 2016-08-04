@@ -14,7 +14,12 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <Expander Grid.Column="0" 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Expander Grid.Column="0" Grid.RowSpan="2"
                       IsExpanded="True"
                       ExpandDirection="Up" 
                       FontSize="16">
@@ -32,6 +37,18 @@
                     <RotateTransform Angle="-90" />
                 </StackPanel.LayoutTransform>
 
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
+
+                <TextBlock Text="Содержание" />
+                <TextBlock Text="Содержание" />
                 <TextBlock Text="Содержание" />
                 <TreeView Name="contentsTreeView" 
                           ItemsSource="{Binding Entities}" 
@@ -56,17 +73,30 @@
             </StackPanel>
         </Expander>
 
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
 
-        <FlowDocumentScrollViewer Name="documentViewer"
-                                      Grid.Column="1"
-                                      >
+            <Button x:Name="BackButton" Grid.Column="0" Content="Назад" Click="BackButton_Click"/>
+            <TextBlock Grid.Column="1" Text="FileDescription" FontSize="20" FontFamily="Times New Roman" HorizontalAlignment="Center"/>
+            <Button x:Name="ForwardButton" Grid.Column="2" Content="Вперед" Click="ForwardButton_Click"/>
+        </Grid>
+
+
+            <FlowDocumentScrollViewer Name="documentViewer"
+                                      Grid.Column="1" Grid.Row="1"
+                                      IsToolBarVisible="True"
+                                      Zoom="150">
             <FlowDocument Name="mainDocument"
                           TextAlignment="Center"
                           Foreground="Black"
                           Background="White"
                           />
         </FlowDocumentScrollViewer>
-
+    
     </Grid>
     
 </UserControl>

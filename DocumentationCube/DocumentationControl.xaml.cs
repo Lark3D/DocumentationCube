@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -26,6 +27,9 @@ namespace DocumentationCube
         #region Fields
         private Documentation documentation;
         private string _fileName;
+        private string currentFile;
+        private Stack<string> previousFiles = new Stack<string>();
+        private Stack<string> nextFiles = new Stack<string>();
         #endregion
 
         public DocumentationControl()
@@ -60,6 +64,8 @@ namespace DocumentationCube
                 }
             }
         }
+
+     
         #endregion
 
         #region Methods
@@ -83,6 +89,13 @@ namespace DocumentationCube
 
                     documentViewer.Document = mainDocument;
                 }
+
+                if (!string.IsNullOrEmpty(currentFile))
+                {
+                    previousFiles.Push(currentFile);
+                }
+                
+                currentFile = fileName;
             }
         }
         #endregion
@@ -124,6 +137,24 @@ namespace DocumentationCube
                 contentsTreeView.ItemsSource = Entities;
             }
         }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (previousFiles.Any())
+            {
+                nextFiles.Push(currentFile);
+                ShowDocument(previousFiles.Pop());
+                previousFiles.Pop();
+            }
+        }
+
+        private void ForwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (nextFiles.Any())
+            {
+                ShowDocument(nextFiles.Pop());
+            }
+        }
         #endregion
 
         #region INotifyPropertyChanded
@@ -137,5 +168,7 @@ namespace DocumentationCube
 
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
+
+        
     }
 }
