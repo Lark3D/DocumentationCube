@@ -26,7 +26,7 @@ namespace DocumentationCube
     {
         #region Fields
         private Documentation documentation;
-        private string _fileName;
+        private string _directory;
         private string currentFile;
         private Stack<string> previousFiles = new Stack<string>();
         private Stack<string> nextFiles = new Stack<string>();
@@ -36,7 +36,7 @@ namespace DocumentationCube
         {
             InitializeComponent();
             AddHandler(Hyperlink.RequestNavigateEvent, new RoutedEventHandler(OnNavigationRequest));
-            this.PropertyChanged += OnFileNameChanged;
+            this.PropertyChanged += OnDirectoryChanged;
         }
 
         #region Properties
@@ -52,14 +52,14 @@ namespace DocumentationCube
             }
         }
 
-        public string FileName
+        public string Directory
         {
-            get { return _fileName; }
+            get { return _directory; }
             set
             {
                 if (File.Exists(value))
                 {
-                    _fileName = value;
+                    _directory = value;
                     RaisePropertyChanged("FileName");
                 }
             }
@@ -69,9 +69,11 @@ namespace DocumentationCube
         #endregion
 
         #region Methods
-        private void LoadDocumentation()
+        public void LoadDocumentation(string directory)
         {
-            documentation = XmlOperator.LoadFromXml(_fileName);
+            _directory = directory;
+            documentation = Constructor.Load(_directory);
+            contentsTreeView.ItemsSource = Entities;
         }
 
         private void ShowDocument(string fileName)
@@ -128,12 +130,11 @@ namespace DocumentationCube
             }
         }
 
-        private void OnFileNameChanged(object sender, PropertyChangedEventArgs e)
+        private void OnDirectoryChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "FileName")
+            if (e.PropertyName == "Directory")
             {
-                LoadDocumentation();
-                contentsTreeView.ItemsSource = Entities;
+                LoadDocumentation(_directory);
             }
         }
 
