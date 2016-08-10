@@ -126,7 +126,71 @@ namespace DocumentationCube
             }
             else
             {
-                ShowDocument(uri);
+                if (uri.Contains('#'))
+                {
+                    var uriSplit = uri.Split('#');
+                    var pathUri = uriSplit[0];
+                    var bookmarkName = uriSplit[1];
+
+                    //ShowDocument(pathUri);
+
+                    using (FileStream fs = File.Open(pathUri, FileMode.Open, FileAccess.Read))
+                    {
+                        var content = new TextRange(mainDocument.ContentStart, mainDocument.ContentEnd);
+
+                        if (content.CanLoad(DataFormats.Rtf))
+                        {
+                            content.Load(fs, DataFormats.Rtf);
+                        }
+
+                        foreach (Block block in mainDocument.Blocks)
+                        {
+                            if (block is Paragraph)
+                            {
+                                Paragraph paragraph = (Paragraph)block;
+                                Search(paragraph.Inlines, bookmarkName, paragraph);
+                            }
+                            else
+                            {
+                                
+                            }
+                            //        mainDocument.
+                            //        if (block.)
+                            //            block.BringIntoView
+                            //   }
+                        }
+
+                        //paragraph.BringIntoView();
+                    }
+                }
+                else
+                {
+                    ShowDocument(uri);
+                }
+            }
+        }
+
+        private void Search(InlineCollection inlines, string bookmarkName, Paragraph paragraph)
+        {
+            foreach (Inline inline in inlines)
+            {
+                if (inline is Run)
+                {
+                    Run run = (Run)inline;
+                    if (run.Text.Contains("#"))
+                    {
+                        paragraph.BringIntoView();
+                    }
+                }
+                else
+                {
+                    if (inline is Span)
+                    {
+                        Span span = (Span)inline;
+                        
+                        Search(span.Inlines, bookmarkName, paragraph);
+                    }
+                }
             }
         }
 

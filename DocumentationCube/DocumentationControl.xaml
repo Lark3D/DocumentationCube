@@ -22,7 +22,7 @@
         <Expander Grid.Column="0" Grid.RowSpan="2"
                       IsExpanded="True"
                       ExpandDirection="Up" 
-                      FontSize="16">
+                      FontSize="16" >
 
             <Expander.LayoutTransform>
                 <RotateTransform Angle="90"/>
@@ -37,7 +37,7 @@
                     <RotateTransform Angle="-90" />
                 </StackPanel.LayoutTransform>
 
-                <TextBlock Text="Содержание" />
+                <!--<TextBlock Text="Содержание" />-->
 
                 <TreeView Name="contentsTreeView" 
                           ItemsSource="{Binding Entities}" 
@@ -75,15 +75,15 @@
         </Grid>
 
 
-            <FlowDocumentScrollViewer Name="documentViewer"
-                                      Grid.Column="1" Grid.Row="1"
+            <FlowDocumentReader Name="documentViewer" 
+                                      Grid.Column="1" Grid.Row="1" ViewingMode="Scroll"
                                       >
             <FlowDocument Name="mainDocument"
                           TextAlignment="Center"
                           Foreground="Black"
                           Background="White"
                           />
-        </FlowDocumentScrollViewer>
+        </FlowDocumentReader>
     
     </Grid>
     
