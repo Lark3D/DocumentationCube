@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DemoCube"
         xmlns:doc="clr-namespace:DocumentationCube;assembly=DocumentationCube"
         mc:Ignorable="d"
-        Title="MainWindow" Height="480" Width="720">
+        Title="MainWindow" Height="600" Width="960">
     <Grid>
         <doc:DocumentationControl x:Name="Docs"/>
     </Grid>
