@@ -5,46 +5,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentationCube"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="600">
+             d:DesignHeight="500" d:DesignWidth="800">
 
     <Grid>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*" MinWidth="400"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="3"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <Expander Grid.Column="0" Grid.RowSpan="2"
-                      IsExpanded="True"
-                      ExpandDirection="Up" 
-                      FontSize="16" >
+        <Expander x:Name="contentsExpander"
+                  Header="Содержание"
+                  Grid.Column="0" Grid.RowSpan="3"
+                  IsExpanded="True"
+                  ExpandDirection="Up" 
+                  FontSize="18" 
+                  Background="#FFEBE8EE"
+                  Style="{DynamicResource ContentsExpanderStyle}">
 
             <Expander.LayoutTransform>
                 <RotateTransform Angle="90"/>
             </Expander.LayoutTransform>
 
-            <Expander.Header>
-                <TextBlock Text="Содержание" />
-            </Expander.Header>
-
-            <StackPanel>
+            <StackPanel Margin="4">
                 <StackPanel.LayoutTransform>
                     <RotateTransform Angle="-90" />
                 </StackPanel.LayoutTransform>
 
-                <!--<TextBlock Text="Содержание" />-->
+                <TextBlock Text="{Binding ElementName=contentsExpander, Path=Header}" Margin="8"/>
 
                 <TreeView Name="contentsTreeView" 
                           ItemsSource="{Binding Entities}" 
                           SelectedValuePath="{Binding SelectedEntity}"
                           SelectedItemChanged="ContentsSelectedItemChanged"
-                          Grid.Row="0" 
-                          Grid.Column="0" 
+                          Grid.Row="0" Grid.Column="0" 
+                          Margin="8"
                           MinWidth="200"
                           VerticalAlignment="Bottom">
 
@@ -69,14 +70,33 @@
                 <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="BackButton" Grid.Column="0" Content="Назад" Click="BackButton_Click"/>
+            <Button x:Name="BackButton" Grid.Column="0" Click="BackButton_Click" Style="{DynamicResource ControlButtonStyle}">
+                <Viewbox Width="24" Height="24">
+                <Path StrokeThickness="2" Stroke="#FF000000" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
+                    <Path.Data>
+                        <PathGeometry Figures="m 12 6 -10 10 10 10 m -10 -10 28 0" FillRule="evenodd"/>
+                    </Path.Data>
+                </Path>
+                </Viewbox>
+            </Button>
+            
             <TextBlock Grid.Column="1" Text="{Binding ElementName=contentsTreeView, Path=SelectedItem.Description}" FontSize="20" HorizontalAlignment="Center"/>
-            <Button x:Name="ForwardButton" Grid.Column="2" Content="Вперед" Click="ForwardButton_Click"/>
+            
+            <Button x:Name="ForwardButton" Grid.Column="2" Click="ForwardButton_Click" Style="{DynamicResource ControlButtonStyle}">
+                <Viewbox Width="24" Height="24">
+                    <Path StrokeThickness="2" Stroke="#FF000000"   StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
+                        <Path.Data>
+                            <PathGeometry Figures="m 20 6 10 10 -10 10 m -18 -10 28 0" FillRule="evenodd"/>
+                        </Path.Data>
+                    </Path>
+                </Viewbox>
+            </Button>
         </Grid>
 
+        <Rectangle Fill="#FFEBE8EE" Grid.Row="1" Grid.Column="1" />
 
-            <FlowDocumentReader Name="documentViewer" 
-                                      Grid.Column="1" Grid.Row="1" ViewingMode="Scroll"
+        <FlowDocumentReader Name="documentViewer" 
+                                      Grid.Column="1" Grid.Row="2" ViewingMode="Scroll" IsTwoPageViewEnabled="False"
                                       >
             <FlowDocument Name="mainDocument"
                           TextAlignment="Center"

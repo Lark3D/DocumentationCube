@@ -4,6 +4,13 @@
              xmlns:local="clr-namespace:DemoCube"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DocumentationCube;component/ContentsExpanderStyle.xaml"/>
+                <ResourceDictionary Source="/DocumentationCube;component/ControlButtonStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
     </Application.Resources>
 </Application>
