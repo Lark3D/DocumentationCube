@@ -21,6 +21,8 @@ namespace DocumentationCube
         {
             var newList = new List<DocumentationEntity>();
 
+            if (!Directory.Exists(path)) return newList;
+
             List<string> files = Directory.EnumerateFiles(path).ToList();
             List<string> directories = Directory.EnumerateDirectories(path).ToList();
 

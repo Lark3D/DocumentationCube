@@ -60,11 +60,10 @@ namespace DocumentationCube
                 if (File.Exists(value))
                 {
                     _directory = value;
-                    RaisePropertyChanged("FileName");
+                    RaisePropertyChanged(nameof(Directory));
                 }
             }
         }
-
      
         #endregion
 
