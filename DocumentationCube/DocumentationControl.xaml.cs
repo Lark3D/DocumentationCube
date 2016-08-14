@@ -95,19 +95,9 @@ namespace DocumentationCube
 
         private FlowDocument GenerateDocument(Node node)
         {
-            if (!(node is DocumentNode))
-            {
-                var paragraph = new Paragraph(new Run("Выберите документ для отображения."));
-                paragraph.TextAlignment = TextAlignment.Center;
-                return new FlowDocument(paragraph);
-            }
+            if (!(node is DocumentNode)) return SimpleDocument("Выберите документ для отображения.");
             
-            if (!File.Exists(node.Path))
-            {
-                var paragraph = new Paragraph(new Run("Файл не найден."));
-                paragraph.TextAlignment = TextAlignment.Center;
-                return new FlowDocument(paragraph);
-            }
+            if (!File.Exists(node.Path)) return SimpleDocument("Файл не найден.");
 
             try
             {
@@ -118,14 +108,23 @@ namespace DocumentationCube
                     content.Load(fs, DataFormats.Rtf);
                 }
                 doc.PageWidth = 800;
+                doc.PagePadding = new Thickness(50);
                 return doc;
             }
             catch
             {
-                var paragraph = new Paragraph(new Run("Файл поврежден и не может быть отображен."));
-                paragraph.TextAlignment = TextAlignment.Center;
-                return new FlowDocument(paragraph);
+                return SimpleDocument("Файл поврежден и не может быть отображен.");
             }
+        }
+
+        private FlowDocument SimpleDocument(string text)
+        {
+            var paragraph = new Paragraph(new Run(text));
+            paragraph.TextAlignment = TextAlignment.Center;
+            var doc = new FlowDocument(paragraph);
+            doc.PageWidth = 800;
+            doc.PagePadding = new Thickness(50);
+            return doc;
         }
 
         #endregion

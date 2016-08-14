@@ -8,7 +8,7 @@
              d:DesignHeight="400" d:DesignWidth="700"
              >
 
-    <Grid>
+    <Grid Background="LightGray">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -44,14 +44,14 @@
                 <TreeView Grid.Row="0" Grid.Column="0" Name="contentsTreeView"
                           Margin="8" MinWidth="200" VerticalAlignment="Bottom"
                           SelectedItemChanged="OnTreeViewSelectedItemChanged"
-                          ItemsSource="{Binding Docs.Nodes}"
+                          ItemsSource="{Binding Docs.Nodes}" FontSize="14"
                           >
                     <TreeView.Resources>
                         <HierarchicalDataTemplate DataType="{x:Type local:CategoryNode}" ItemsSource="{Binding Nodes}">
-                            <TextBlock Text="{Binding Text}" Background="LightGray" MinWidth="20" MinHeight="20" />
+                            <TextBlock Text="{Binding Text}" Background="LightGray" MinWidth="20" MinHeight="20" Margin="2" HorizontalAlignment="Stretch" />
                         </HierarchicalDataTemplate>
                         <DataTemplate DataType="{x:Type local:DocumentNode}" >
-                            <TextBlock Text="{Binding Text}" Background="WhiteSmoke" MinWidth="20" MinHeight="20" />
+                            <TextBlock Text="{Binding Text}" Background="WhiteSmoke" MinWidth="20" MinHeight="20" Margin="2" HorizontalAlignment="Stretch" />
                         </DataTemplate>
                     </TreeView.Resources>
                 </TreeView>
@@ -88,9 +88,12 @@
             </Button>
         </Grid>
 
-        <Rectangle Fill="#FFEBE8EE" Grid.Row="1" Grid.Column="1" />
-
-        <FlowDocumentReader Name="documentViewer" Grid.Column="1" Grid.Row="2" ViewingMode="Scroll" IsFindEnabled="True" IsPrintEnabled="True" />
+        <!--
+        <Rectangle Fill="#FFEBE8EE" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
+-->
+        <Border Grid.Column="1" Grid.Row="2" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="White" >
+            <FlowDocumentReader Name="documentViewer" Grid.Column="1" Grid.Row="2" ViewingMode="Scroll" IsFindEnabled="True" IsPrintEnabled="True" HorizontalAlignment="Center" />
+        </Border>
 
     </Grid>
     
