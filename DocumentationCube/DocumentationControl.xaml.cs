@@ -27,6 +27,7 @@ namespace DocumentationCube
         #region Fields
         private CategoryNode _docs = null;
         private Node _selectedNode;
+        private Dictionary<string, Block> _bookmarkedBlocks = new Dictionary<string, Block>();
         private Stack<Node> previousNode = new Stack<Node>();
         private Stack<Node> nextNode = new Stack<Node>();
         #endregion
@@ -46,6 +47,7 @@ namespace DocumentationCube
             get { return _docs; }
             set { _docs = value; RaisePropertyChanged(nameof(Docs)); }
         }
+
 
         public Node SelectedNode
         {
@@ -85,6 +87,7 @@ namespace DocumentationCube
             return node;
         }
 
+
         private void LoadDocumentation(string path)
         {
             if (!Directory.Exists(path)) path = System.IO.Path.Combine(Directory.GetCurrentDirectory(), path);
@@ -96,6 +99,7 @@ namespace DocumentationCube
             Docs = LoadDirectoryNode(new DirectoryInfo(path));
             SelectedNode = null;
         }
+
 
         private Node LookUpFullPath(Node node, string path)
         {
@@ -111,6 +115,7 @@ namespace DocumentationCube
             return null;
         }
 
+
         private Node LookUpFile(Node node, string file)
         {
             if (System.IO.Path.GetFileName(node.Path) == file) return node;
@@ -125,8 +130,10 @@ namespace DocumentationCube
             return null;
         }
 
+
         private FlowDocument GenerateDocument(Node node)
         {
+            _bookmarkedBlocks.Clear();
             if (node == null) return SimpleDocument("Выберите документ для отображения.");
 
             if (!(node is DocumentNode)) return SimpleDocument("Выберите документ для отображения.");
@@ -143,6 +150,7 @@ namespace DocumentationCube
                 }
                 doc.PageWidth = 800;
                 doc.PagePadding = new Thickness(50);
+                _bookmarkedBlocks = ProccessBookmarksInDocument(doc);
                 return doc;
             }
             catch
@@ -150,6 +158,7 @@ namespace DocumentationCube
                 return SimpleDocument("Файл поврежден и не может быть отображен.");
             }
         }
+
 
         private FlowDocument SimpleDocument(string text)
         {
@@ -160,6 +169,7 @@ namespace DocumentationCube
             doc.PagePadding = new Thickness(50);
             return doc;
         }
+
 
         private void SelectNewNode(Node node)
         {
@@ -189,12 +199,14 @@ namespace DocumentationCube
             }
         }
 
+
         private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (contentsTreeView.SelectedItem == null) return;
             if (SelectedNode == contentsTreeView.SelectedItem) return;
             SelectNewNode(contentsTreeView.SelectedItem as Node);
         }
+
 
         private void OnNavigationRequest(object sender, RoutedEventArgs e)
         {
@@ -205,99 +217,105 @@ namespace DocumentationCube
             if (uri.IsAbsoluteUri && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
             {
                 Process.Start(uri.OriginalString);
+                return;
             }
-            else
+
+            var splitresult = uri.OriginalString.Split(new char[] { '#' }, 2);
+            string path = splitresult[0].Trim();
+            string bookmark = null;
+            if (splitresult.Count() > 1) bookmark = splitresult[1].Trim();
+            if (bookmark != null) bookmark = "#" + bookmark;
+
+            if (!string.IsNullOrEmpty(path))
             {
-                var splitresult = uri.OriginalString.Split(new char[] { '#' }, 2);
-                string path = splitresult[0].Trim();
-                string bookmark = null;
-                if (splitresult.Count() > 1) bookmark = splitresult[1].Trim();
-
-                if (!string.IsNullOrEmpty(path))
+                string fullpath = System.IO.Path.Combine(Docs.Path, path.Replace('/', '\\'));
+                Node node = LookUpFullPath(Docs, fullpath);
+                if (node == null) node = LookUpFile(Docs, path);
+                if (node != null)
                 {
-                    string fullpath = System.IO.Path.Combine(Docs.Path, path.Replace('/', '\\'));
-                    Node node = LookUpFullPath(Docs, fullpath);
-                    if (node == null) node = LookUpFile(Docs, path);
-                    if (node != null)
-                    {
-                        SelectNewNode(node);
-                    }
+                    SelectNewNode(node);
                 }
-
-                documentViewer.Document
-
             }
-            /*
-            else
+
+            if (!string.IsNullOrEmpty(bookmark))
             {
-                if (uri.Contains('#'))
+                /*
+                Paragraph p = GetBookmarkFromDocument(documentViewer.Document, bookmark);
+                if (p != null)
                 {
-                    var uriSplit = uri.Split('#');
-                    var pathUri = uriSplit[0];
-                    var bookmarkName = uriSplit[1];
-
-                    //ShowDocument(pathUri);
-
-                    using (FileStream fs = File.Open(pathUri, FileMode.Open, FileAccess.Read))
-                    {
-                        var content = new TextRange(mainDocument.ContentStart, mainDocument.ContentEnd);
-
-                        if (content.CanLoad(DataFormats.Rtf))
-                        {
-                            content.Load(fs, DataFormats.Rtf);
-                        }
-
-                        foreach (Block block in mainDocument.Blocks)
-                        {
-                            if (block is Paragraph)
-                            {
-                                Paragraph paragraph = (Paragraph)block;
-                                Search(paragraph.Inlines, bookmarkName, paragraph);
-                            }
-                            else
-                            {
-                                
-                            }
-                            //        mainDocument.
-                            //        if (block.)
-                            //            block.BringIntoView
-                            //   }
-                        }
-
-                        //paragraph.BringIntoView();
-                    }
+                    if (p.NextBlock != null) p.NextBlock.BringIntoView();
+                    //p.NextBlock.BringIntoView();
+                    //MessageBox.Show("found " + bookmark);
                 }
-                else
-                {
-                    ShowDocument(uri);
-                }
+                */
+                if (_bookmarkedBlocks.ContainsKey(bookmark)) _bookmarkedBlocks[bookmark].BringIntoView();
             }
-            */
             
         }
 
-        private void Search(InlineCollection inlines, string bookmarkName, Paragraph paragraph)
+
+        // не используется
+        private Paragraph GetBookmarkFromDocument(FlowDocument document, string bookmark)
         {
-            foreach (Inline inline in inlines)
+            foreach (Paragraph p in document.Blocks.OfType<Paragraph>())
             {
-                if (inline is Run)
+                Run run;
+                if (p.Inlines.FirstInline is Run)
                 {
-                    Run run = (Run)inline;
-                    if (run.Text.Contains("#"))
-                    {
-                        paragraph.BringIntoView();
-                    }
+                    run = p.Inlines.FirstInline as Run;
+                }
+                else if (p.Inlines.FirstInline is Span)
+                {
+                    Span span = p.Inlines.FirstInline as Span;
+                    if (span.Inlines.FirstInline is Run) run = span.Inlines.FirstInline as Run;
+                    else continue;
                 }
                 else
                 {
-                    if (inline is Span)
-                    {
-                        Span span = (Span)inline;
-                        
-                        Search(span.Inlines, bookmarkName, paragraph);
-                    }
+                    continue;
+                }
+                if (run.Text == bookmark) return p;
+            }
+            return null;
+        }
+
+
+        private Dictionary<string, Block> ProccessBookmarksInDocument(FlowDocument document)
+        {
+            var list = new List<Block>();
+            var dic = new Dictionary<string, Block>();
+
+            foreach (Paragraph p in document.Blocks.OfType<Paragraph>())
+            {
+                Run run;
+                if (p.Inlines.FirstInline is Run)
+                {
+                    run = p.Inlines.FirstInline as Run;
+                }
+                else if (p.Inlines.FirstInline is Span)
+                {
+                    Span span = p.Inlines.FirstInline as Span;
+                    if (span.Inlines.FirstInline is Run) run = span.Inlines.FirstInline as Run;
+                    else continue;
+                }
+                else
+                {
+                    continue;
+                }
+                if (run.Text.StartsWith("#") && p.NextBlock != null)
+                {
+                    dic.Add(run.Text, p.NextBlock);
+                    list.Add(p);
                 }
             }
+
+            while (list.Count > 0 )
+            {
+                document.Blocks.Remove(list[list.Count - 1]);
+                list.RemoveAt(list.Count - 1);
+            }
+
+            return dic;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
