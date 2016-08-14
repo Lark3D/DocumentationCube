@@ -148,7 +148,8 @@ namespace DocumentationCube
                     var content = new TextRange(doc.ContentStart, doc.ContentEnd);
                     content.Load(fs, DataFormats.Rtf);
                 }
-                doc.PageWidth = 800;
+                doc.MaxPageWidth = 800;
+                doc.ColumnWidth = 800;
                 doc.PagePadding = new Thickness(50);
                 _bookmarkedBlocks = ProccessBookmarksInDocument(doc);
                 return doc;
@@ -165,7 +166,8 @@ namespace DocumentationCube
             var paragraph = new Paragraph(new Run(text));
             paragraph.TextAlignment = TextAlignment.Center;
             var doc = new FlowDocument(paragraph);
-            doc.PageWidth = 800;
+            doc.MaxPageWidth = 800;
+            doc.ColumnWidth = 800;
             doc.PagePadding = new Thickness(50);
             return doc;
         }
