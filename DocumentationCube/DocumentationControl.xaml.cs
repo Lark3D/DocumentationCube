@@ -97,6 +97,34 @@ namespace DocumentationCube
             SelectedNode = null;
         }
 
+        private Node LookUpFullPath(Node node, string path)
+        {
+            if (node.Path == path) return node;
+            if (node is CategoryNode)
+            {
+                foreach(Node n in (node as CategoryNode).Nodes)
+                {
+                    Node resultnode = LookUpFullPath(n, path);
+                    if (resultnode != null) return resultnode;
+                }
+            }
+            return null;
+        }
+
+        private Node LookUpFile(Node node, string file)
+        {
+            if (System.IO.Path.GetFileName(node.Path) == file) return node;
+            if (node is CategoryNode)
+            {
+                foreach (Node n in (node as CategoryNode).Nodes.OrderBy( n => (n is CategoryNode)? 1 : 0 ))
+                {
+                    Node resultnode = LookUpFile(n, file);
+                    if (resultnode != null) return resultnode;
+                }
+            }
+            return null;
+        }
+
         private FlowDocument GenerateDocument(Node node)
         {
             if (node == null) return SimpleDocument("Выберите документ для отображения.");
@@ -133,6 +161,13 @@ namespace DocumentationCube
             return doc;
         }
 
+        private void SelectNewNode(Node node)
+        {
+            nextNode.Clear();
+            if (SelectedNode is DocumentNode) previousNode.Push(SelectedNode);
+            SelectedNode = node;
+        }
+
         #endregion
 
         #region Event handlers
@@ -142,14 +177,13 @@ namespace DocumentationCube
             if (e.PropertyName == nameof(SelectedNode))
             {
                 documentViewer.Document = GenerateDocument(SelectedNode);
-                if (SelectedNode == null)
-                {
-                    var item = contentsTreeView.ItemContainerGenerator.ContainerFromItem(contentsTreeView.SelectedItem) as TreeViewItem;
-                    if (item != null) item.IsSelected = false;
-                }
+
+                var item = contentsTreeView.ItemContainerGenerator.ContainerFromItem(contentsTreeView.SelectedItem) as TreeViewItem;
+                if (item != null) item.IsSelected = false;
+                
                 if (SelectedNode != null && SelectedNode != contentsTreeView.SelectedItem)
                 {
-                    var item = contentsTreeView.ItemContainerGenerator.ContainerFromItem(SelectedNode) as TreeViewItem;
+                    item = contentsTreeView.ItemContainerGenerator.ContainerFromItem(SelectedNode) as TreeViewItem;
                     if (item != null) item.IsSelected = true;
                 }
             }
@@ -157,22 +191,43 @@ namespace DocumentationCube
 
         private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            if (contentsTreeView.SelectedItem == null) return;
             if (SelectedNode == contentsTreeView.SelectedItem) return;
-            nextNode.Clear();
-            if (SelectedNode is DocumentNode) previousNode.Push(SelectedNode);
-            SelectedNode = contentsTreeView.SelectedItem as Node;
+            SelectNewNode(contentsTreeView.SelectedItem as Node);
         }
 
         private void OnNavigationRequest(object sender, RoutedEventArgs e)
         {
-            /*
-            Hyperlink link = e.OriginalSource as Hyperlink; 
-            string uri = link.NavigateUri.ToString();
+            
+            Hyperlink link = e.OriginalSource as Hyperlink;
+            Uri uri = link.NavigateUri;
 
-            if (uri.Contains("http"))
+            if (uri.IsAbsoluteUri && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
             {
-                Process.Start(uri);
+                Process.Start(uri.OriginalString);
             }
+            else
+            {
+                var splitresult = uri.OriginalString.Split(new char[] { '#' }, 2);
+                string path = splitresult[0].Trim();
+                string bookmark = null;
+                if (splitresult.Count() > 1) bookmark = splitresult[1].Trim();
+
+                if (!string.IsNullOrEmpty(path))
+                {
+                    string fullpath = System.IO.Path.Combine(Docs.Path, path.Replace('/', '\\'));
+                    Node node = LookUpFullPath(Docs, fullpath);
+                    if (node == null) node = LookUpFile(Docs, path);
+                    if (node != null)
+                    {
+                        SelectNewNode(node);
+                    }
+                }
+
+                documentViewer.Document
+
+            }
+            /*
             else
             {
                 if (uri.Contains('#'))
@@ -218,6 +273,7 @@ namespace DocumentationCube
                 }
             }
             */
+            
         }
 
         private void Search(InlineCollection inlines, string bookmarkName, Paragraph paragraph)
