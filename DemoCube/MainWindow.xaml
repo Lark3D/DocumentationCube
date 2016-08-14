@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="960">
     <Grid>
-        <doc:DocumentationControl x:Name="Docs"/>
+        <doc:DocumentationControl Path="Doc" />
     </Grid>
 </Window>

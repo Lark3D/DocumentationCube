@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentationCube"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="700">
+             d:DesignHeight="400" d:DesignWidth="700"
+             >
 
     <Grid>
 
@@ -40,25 +41,19 @@
 
                 <TextBlock Text="{Binding ElementName=contentsExpander, Path=Header}" Margin="8"/>
 
-                <TreeView Name="contentsTreeView" 
-                          ItemsSource="{Binding Entities}" 
-                          SelectedValuePath="{Binding SelectedEntity}"
-                          SelectedItemChanged="ContentsSelectedItemChanged"
-                          Grid.Row="0" Grid.Column="0" 
-                          Margin="8"
-                          MinWidth="200"
-                          VerticalAlignment="Bottom">
-
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type local:MarkupEntity}" 
-                                                  ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding Path=Description}" />
-                    </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type local:Document}" >
-                        <TextBlock Text="{Binding Path=Description}" />
-                    </DataTemplate>
-                </TreeView.Resources>
-
+                <TreeView Grid.Row="0" Grid.Column="0" Name="contentsTreeView"
+                          Margin="8" MinWidth="200" VerticalAlignment="Bottom"
+                          SelectedItemChanged="OnTreeViewSelectedItemChanged"
+                          ItemsSource="{Binding Docs.Nodes}"
+                          >
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type local:CategoryNode}" ItemsSource="{Binding Nodes}">
+                            <TextBlock Text="{Binding Text}" Background="LightGray" MinWidth="20" MinHeight="20" />
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type local:DocumentNode}" >
+                            <TextBlock Text="{Binding Text}" Background="WhiteSmoke" MinWidth="20" MinHeight="20" />
+                        </DataTemplate>
+                    </TreeView.Resources>
                 </TreeView>
             </StackPanel>
         </Expander>
@@ -95,16 +90,8 @@
 
         <Rectangle Fill="#FFEBE8EE" Grid.Row="1" Grid.Column="1" />
 
-        <FlowDocumentReader Name="documentViewer" 
-                                      Grid.Column="1" Grid.Row="2" ViewingMode="Scroll" IsTwoPageViewEnabled="False"
-                                      >
-            <FlowDocument Name="mainDocument"
-                          TextAlignment="Center"
-                          Foreground="Black"
-                          Background="White"
-                          />
-        </FlowDocumentReader>
-    
+        <FlowDocumentReader Name="documentViewer" Grid.Column="1" Grid.Row="2" ViewingMode="Scroll" IsFindEnabled="True" IsPrintEnabled="True" />
+
     </Grid>
     
 </UserControl>

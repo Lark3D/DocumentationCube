@@ -6,27 +6,21 @@ using System.Threading.Tasks;
 
 namespace DocumentationCube
 {
-    public class DocumentationEntity
+    public class Node
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Text { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
     }
 
-    public class Document : DocumentationEntity
+    public class CategoryNode : Node
     {
-        public string FileName { get; set; }
+        public List<Node> Nodes { get; set; } = new List<Node>();
     }
 
-    public class MarkupEntity : DocumentationEntity
+    public class DocumentNode : Node
     {
-        public List<DocumentationEntity> Children { get; set; }
+
     }
-
-     public class Documentation : MarkupEntity
-    { }
-
-    public class SubSection : MarkupEntity
-    { }
 
 
 }

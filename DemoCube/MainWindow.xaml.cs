@@ -24,7 +24,6 @@ namespace DemoCube
         public MainWindow()
         {
             InitializeComponent();
-            Docs.LoadDocumentation("Doc");
         }
 
         

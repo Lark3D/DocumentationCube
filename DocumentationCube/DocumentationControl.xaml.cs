@@ -25,97 +25,133 @@ namespace DocumentationCube
     public partial class DocumentationControl : UserControl, INotifyPropertyChanged
     {
         #region Fields
-        private Documentation documentation;
-        private string _directory;
-        private string currentFile;
-        private Stack<string> previousFiles = new Stack<string>();
-        private Stack<string> nextFiles = new Stack<string>();
+        private CategoryNode _docs = null;
+        private Node _selectedNode;
+        private Stack<Node> previousNode = new Stack<Node>();
+        private Stack<Node> nextNode = new Stack<Node>();
         #endregion
 
         public DocumentationControl()
         {
             InitializeComponent();
             AddHandler(Hyperlink.RequestNavigateEvent, new RoutedEventHandler(OnNavigationRequest));
-            this.PropertyChanged += OnDirectoryChanged;
+            PropertyChanged += OnPropertyChanged;
+            DataContext = this;
         }
 
         #region Properties
-        public List<DocumentationEntity> Entities
+
+        public CategoryNode Docs
+        {
+            get { return _docs; }
+            set { _docs = value; RaisePropertyChanged(nameof(Docs)); }
+        }
+
+        public Node SelectedNode
         {
             get
             {
-                if ((documentation != null) && (documentation.Children != null))
-                {
-                    return documentation.Children;
-                }
-                else return null;
+                return _selectedNode;
+            }
+            set
+            {
+                _selectedNode = value;
+                RaisePropertyChanged(nameof(SelectedNode));
             }
         }
 
-        public string Directory
-        {
-            get { return _directory; }
-            set
-            {
-                if (File.Exists(value))
-                {
-                    _directory = value;
-                    RaisePropertyChanged(nameof(Directory));
-                }
-            }
-        }
-     
         #endregion
 
         #region Methods
-        public void LoadDocumentation(string directory)
+
+        private static CategoryNode LoadDirectoryNode(DirectoryInfo directoryInfo)
         {
-            _directory = directory;
-            documentation = Constructor.Load(_directory);
-            contentsTreeView.ItemsSource = Entities;
+            var node = new CategoryNode();
+            node.Text = directoryInfo.Name;
+            node.Path = directoryInfo.FullName;
+
+            foreach (var directory in directoryInfo.GetDirectories())
+                node.Nodes.Add(LoadDirectoryNode(directory));
+
+            foreach (var file in directoryInfo.GetFiles())
+            {
+                if (System.IO.Path.GetExtension(file.Name).ToLower() != ".rtf") continue;
+                var fnode = new DocumentNode();
+                fnode.Text = System.IO.Path.GetFileNameWithoutExtension(file.Name);
+                fnode.Path = file.FullName;
+                node.Nodes.Add(fnode);
+            }
+
+            return node;
         }
 
-        private void ShowDocument(string fileName)
+        private void LoadDocumentation(string path)
         {
-            if (File.Exists(fileName))
+            if (!Directory.Exists(path)) path = System.IO.Path.Combine(Directory.GetCurrentDirectory(), path);
+            if (!Directory.Exists(path)) return;
+
+            Docs = LoadDirectoryNode(new DirectoryInfo(path));
+        }
+
+        private FlowDocument GenerateDocument(Node node)
+        {
+            if (!(node is DocumentNode))
             {
-                using (FileStream fs = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                var paragraph = new Paragraph(new Run("Выберите документ для отображения."));
+                paragraph.TextAlignment = TextAlignment.Center;
+                return new FlowDocument(paragraph);
+            }
+            
+            if (!File.Exists(node.Path))
+            {
+                var paragraph = new Paragraph(new Run("Файл не найден."));
+                paragraph.TextAlignment = TextAlignment.Center;
+                return new FlowDocument(paragraph);
+            }
+
+            try
+            {
+                var doc = new FlowDocument();
+                using (FileStream fs = File.Open(node.Path, FileMode.Open, FileAccess.Read))
                 {
-                    var content = new TextRange(mainDocument.ContentStart, mainDocument.ContentEnd);
-
-                    if (content.CanLoad(DataFormats.Rtf))
-                    {
-                        content.Load(fs, DataFormats.Rtf);
-                    }
-
-                    documentViewer.Document = mainDocument;
+                    var content = new TextRange(doc.ContentStart, doc.ContentEnd);
+                    content.Load(fs, DataFormats.Rtf);
                 }
-
-                if (!string.IsNullOrEmpty(currentFile))
-                {
-                    previousFiles.Push(currentFile);
-                }
-                currentFile = fileName;
+                doc.PageWidth = 800;
+                return doc;
+            }
+            catch
+            {
+                var paragraph = new Paragraph(new Run("Файл поврежден и не может быть отображен."));
+                paragraph.TextAlignment = TextAlignment.Center;
+                return new FlowDocument(paragraph);
             }
         }
+
         #endregion
 
         #region Event handlers
-        private void ContentsSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            try
+            if (e.PropertyName == nameof(SelectedNode))
             {
-                if (e.NewValue is Document)
+                documentViewer.Document = GenerateDocument(SelectedNode);
+                if (SelectedNode != contentsTreeView.SelectedItem)
                 {
-                    Document doc = e.NewValue as Document;
-                    ShowDocument(doc.FileName);
+                    (contentsTreeView.ItemContainerGenerator.ContainerFromItem(SelectedNode) as TreeViewItem).IsSelected = true;
                 }
             }
-            catch (Exception) { }
+        }
+
+        private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            SelectedNode = contentsTreeView.SelectedItem as Node;
         }
 
         private void OnNavigationRequest(object sender, RoutedEventArgs e)
         {
+            /*
             Hyperlink link = e.OriginalSource as Hyperlink; 
             string uri = link.NavigateUri.ToString();
 
@@ -167,6 +203,7 @@ namespace DocumentationCube
                     ShowDocument(uri);
                 }
             }
+            */
         }
 
         private void Search(InlineCollection inlines, string bookmarkName, Paragraph paragraph)
@@ -193,45 +230,62 @@ namespace DocumentationCube
             }
         }
 
-        private void OnDirectoryChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Directory")
-            {
-                LoadDocumentation(_directory);
-            }
-        }
-
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (previousFiles.Any())
+            /*
+            if (previousNode.Any())
             {
-                nextFiles.Push(currentFile);
-                ShowDocument(previousFiles.Pop());
-                previousFiles.Pop();
+                nextNode.Push(_activeDocument);
+                ShowDocument(previousNode.Pop());
+                previousNode.Pop();
             }
+            */
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            if (nextFiles.Any())
+            /*
+            if (nextNode.Any())
             {
-                ShowDocument(nextFiles.Pop());
+                ShowDocument(nextNode.Pop());
             }
+            */
         }
         #endregion
 
         #region INotifyPropertyChanded
         private void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
+        #region Dependancy Properties
         
+        public static DependencyProperty PathProperty =
+            DependencyProperty.Register("Path", typeof(string), typeof(DocumentationControl),
+            new PropertyMetadata(string.Empty, new PropertyChangedCallback(OnPathPropertyChanged)));
+
+        private static void OnPathPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as DocumentationControl).LoadDocumentation((string)e.NewValue);
+        }
+
+        public string Path
+        {
+            get
+            {
+                return (string)GetValue(PathProperty);
+            }
+            set
+            {
+                SetValue(PathProperty, value);
+            }
+        }
+
+        #endregion
     }
 }
