@@ -90,11 +90,17 @@ namespace DocumentationCube
             if (!Directory.Exists(path)) path = System.IO.Path.Combine(Directory.GetCurrentDirectory(), path);
             if (!Directory.Exists(path)) return;
 
+            previousNode.Clear();
+            nextNode.Clear();
+
             Docs = LoadDirectoryNode(new DirectoryInfo(path));
+            SelectedNode = null;
         }
 
         private FlowDocument GenerateDocument(Node node)
         {
+            if (node == null) return SimpleDocument("Выберите документ для отображения.");
+
             if (!(node is DocumentNode)) return SimpleDocument("Выберите документ для отображения.");
             
             if (!File.Exists(node.Path)) return SimpleDocument("Файл не найден.");
@@ -136,15 +142,24 @@ namespace DocumentationCube
             if (e.PropertyName == nameof(SelectedNode))
             {
                 documentViewer.Document = GenerateDocument(SelectedNode);
-                if (SelectedNode != contentsTreeView.SelectedItem)
+                if (SelectedNode == null)
                 {
-                    (contentsTreeView.ItemContainerGenerator.ContainerFromItem(SelectedNode) as TreeViewItem).IsSelected = true;
+                    var item = contentsTreeView.ItemContainerGenerator.ContainerFromItem(contentsTreeView.SelectedItem) as TreeViewItem;
+                    if (item != null) item.IsSelected = false;
+                }
+                if (SelectedNode != null && SelectedNode != contentsTreeView.SelectedItem)
+                {
+                    var item = contentsTreeView.ItemContainerGenerator.ContainerFromItem(SelectedNode) as TreeViewItem;
+                    if (item != null) item.IsSelected = true;
                 }
             }
         }
 
         private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            if (SelectedNode == contentsTreeView.SelectedItem) return;
+            nextNode.Clear();
+            if (SelectedNode is DocumentNode) previousNode.Push(SelectedNode);
             SelectedNode = contentsTreeView.SelectedItem as Node;
         }
 
@@ -231,24 +246,20 @@ namespace DocumentationCube
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            /*
             if (previousNode.Any())
             {
-                nextNode.Push(_activeDocument);
-                ShowDocument(previousNode.Pop());
-                previousNode.Pop();
+                nextNode.Push(SelectedNode);
+                SelectedNode = previousNode.Pop();
             }
-            */
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            /*
             if (nextNode.Any())
             {
-                ShowDocument(nextNode.Pop());
+                previousNode.Push(SelectedNode);
+                SelectedNode = nextNode.Pop();
             }
-            */
         }
         #endregion
 

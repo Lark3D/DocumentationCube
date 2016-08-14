@@ -12,7 +12,7 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="1*" MinWidth="400"/>
+            <ColumnDefinition Width="1*" MinWidth="600"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -60,31 +60,33 @@
 
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="BackButton" Grid.Column="0" Click="BackButton_Click" Style="{DynamicResource ControlButtonStyle}">
-                <Viewbox Width="24" Height="24">
-                <Path StrokeThickness="2" Stroke="#FF000000" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
-                    <Path.Data>
-                        <PathGeometry Figures="m 12 6 -10 10 10 10 m -10 -10 28 0" FillRule="evenodd"/>
-                    </Path.Data>
-                </Path>
-                </Viewbox>
+            <Button x:Name="BackButton" Grid.Column="0" Click="BackButton_Click" Style="{DynamicResource ControlButtonStyle}" Margin="3">
+                <StackPanel Orientation="Horizontal" >
+                    <Path StrokeThickness="2" Stroke="#FF000000" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
+                        <Path.Data>
+                            <PathGeometry Figures="m 12 6 -10 10 10 10 m -10 -10 28 0" FillRule="evenodd"/>
+                        </Path.Data>
+                    </Path>
+                    <TextBlock Text="Назад" Margin="5" VerticalAlignment="Center" FontSize="14" />
+                </StackPanel>
             </Button>
             
-            <TextBlock Grid.Column="1" Text="{Binding ElementName=contentsTreeView, Path=SelectedItem.Description}" FontSize="20" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding SelectedNode.Text}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             
-            <Button x:Name="ForwardButton" Grid.Column="2" Click="ForwardButton_Click" Style="{DynamicResource ControlButtonStyle}">
-                <Viewbox Width="24" Height="24">
+            <Button x:Name="ForwardButton" Grid.Column="2" Click="ForwardButton_Click" Style="{DynamicResource ControlButtonStyle}" Margin="3">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Вперд" FontSize="14" Margin="5" VerticalAlignment="Center"/>
                     <Path StrokeThickness="2" Stroke="#FF000000"   StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
                         <Path.Data>
                             <PathGeometry Figures="m 20 6 10 10 -10 10 m -18 -10 28 0" FillRule="evenodd"/>
                         </Path.Data>
                     </Path>
-                </Viewbox>
+                </StackPanel>
             </Button>
         </Grid>
 
