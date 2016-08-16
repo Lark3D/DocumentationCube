@@ -373,5 +373,31 @@ namespace DocumentationCube
         }
 
         #endregion
+
     }
+
+    #region TreeViewLineConverter
+    public class TreeViewLineConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            TreeViewItem item = (TreeViewItem)value;
+            ItemsControl ic = ItemsControl.ItemsControlFromItemContainer(item);
+            var flag = (ic.ItemContainerGenerator.IndexFromContainer(item) == (ic.Items.Count - 1));
+            if (flag == true)
+            {
+                return "Hidden";
+            }
+            else
+            {
+                return "Visible";
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return false;
+        }
+    }
+    #endregion
 }

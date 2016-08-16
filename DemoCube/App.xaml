@@ -9,6 +9,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/DocumentationCube;component/ContentsExpanderStyle.xaml"/>
                 <ResourceDictionary Source="/DocumentationCube;component/ControlButtonStyle.xaml"/>
+                <ResourceDictionary Source="/DocumentationCube;component/ContentsTreeViewStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 

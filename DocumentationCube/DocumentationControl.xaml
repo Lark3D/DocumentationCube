@@ -8,7 +8,8 @@
              d:DesignHeight="400" d:DesignWidth="700"
              >
 
-    <Grid Background="LightGray">
+
+    <Grid Background="#FFECEBF0">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -17,7 +18,6 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="3"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
@@ -27,7 +27,8 @@
                   IsExpanded="True"
                   ExpandDirection="Up" 
                   FontSize="18" 
-                  Background="#FFEBE8EE"
+                  Background="#FFE0DEE6"
+                  BorderThickness="0"
                   Style="{DynamicResource ContentsExpanderStyle}">
 
             <Expander.LayoutTransform>
@@ -44,48 +45,55 @@
                 <TreeView Grid.Row="0" Grid.Column="0" Name="contentsTreeView"
                           Margin="8" MinWidth="200" VerticalAlignment="Bottom"
                           SelectedItemChanged="OnTreeViewSelectedItemChanged"
-                          ItemsSource="{Binding Docs.Nodes}" FontSize="14"
-                          >
+                          ItemsSource="{Binding Docs.Nodes}" FontSize="14" 
+                          BorderBrush="Transparent" Background="Transparent"
+                          BorderThickness="1" >
                     <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type local:CategoryNode}" ItemsSource="{Binding Nodes}">
-                            <TextBlock Text="{Binding Text}" Background="LightGray" MinWidth="20" MinHeight="20" Margin="2" HorizontalAlignment="Stretch" />
+                        <HierarchicalDataTemplate DataType="{x:Type local:CategoryNode}" ItemsSource="{Binding Nodes}" >
+                            <TextBlock Text="{Binding Text}" MinWidth="20" MinHeight="20" Margin="8 2" HorizontalAlignment="Stretch" />
+
                         </HierarchicalDataTemplate>
                         <DataTemplate DataType="{x:Type local:DocumentNode}" >
-                            <TextBlock Text="{Binding Text}" Background="WhiteSmoke" MinWidth="20" MinHeight="20" Margin="2" HorizontalAlignment="Stretch" />
+                            <TextBlock Text="{Binding Text}" MinWidth="20" MinHeight="20" Margin="8 2" HorizontalAlignment="Stretch" />
                         </DataTemplate>
                     </TreeView.Resources>
                 </TreeView>
+
             </StackPanel>
         </Expander>
 
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="86"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="86"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="BackButton" Grid.Column="0" Click="BackButton_Click" Style="{DynamicResource ControlButtonStyle}" Margin="3">
-                <StackPanel Orientation="Horizontal" >
-                    <Path StrokeThickness="2" Stroke="#FF000000" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
-                        <Path.Data>
-                            <PathGeometry Figures="m 12 6 -10 10 10 10 m -10 -10 28 0" FillRule="evenodd"/>
-                        </Path.Data>
-                    </Path>
+            <Button x:Name="BackButton" Grid.Column="0" Click="BackButton_Click" Style="{DynamicResource ControlButtonStyle}"  HorizontalContentAlignment="Left">
+                <StackPanel Orientation="Horizontal" Margin="4 0 0 0">
+                    <Viewbox Width="24" Height="24" >
+                        <Path StrokeThickness="2" Stroke="#FF000000" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
+                            <Path.Data>
+                                <PathGeometry Figures="m 12 6 -10 10 10 10 m -10 -10 28 0" FillRule="evenodd"/>
+                            </Path.Data>
+                        </Path>
+                    </Viewbox>
                     <TextBlock Text="Назад" Margin="5" VerticalAlignment="Center" FontSize="14" />
                 </StackPanel>
             </Button>
-            
+
             <TextBlock Grid.Column="1" Text="{Binding SelectedNode.Text}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            
-            <Button x:Name="ForwardButton" Grid.Column="2" Click="ForwardButton_Click" Style="{DynamicResource ControlButtonStyle}" Margin="3">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Вперд" FontSize="14" Margin="5" VerticalAlignment="Center"/>
-                    <Path StrokeThickness="2" Stroke="#FF000000"   StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
-                        <Path.Data>
-                            <PathGeometry Figures="m 20 6 10 10 -10 10 m -18 -10 28 0" FillRule="evenodd"/>
-                        </Path.Data>
-                    </Path>
+            <Rectangle Fill="#FFF5F4F6" Grid.Column="1" Width="50" />
+            <Button x:Name="ForwardButton" Grid.Column="2" Click="ForwardButton_Click" Style="{DynamicResource ControlButtonStyle}"  HorizontalContentAlignment="Right">
+                <StackPanel Orientation="Horizontal" Margin="0 0 4 0">
+                    <TextBlock Text="Вперед" FontSize="14" Margin="5" VerticalAlignment="Center"/>
+                    <Viewbox Width="24" Height="24" >
+                        <Path StrokeThickness="2" Stroke="#FF000000"   StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Height="32" Width="32">
+                            <Path.Data>
+                                <PathGeometry Figures="m 20 6 10 10 -10 10 m -18 -10 28 0" FillRule="evenodd"/>
+                            </Path.Data>
+                        </Path>
+                    </Viewbox>
                 </StackPanel>
             </Button>
         </Grid>
@@ -93,10 +101,10 @@
         <!--
         <Rectangle Fill="#FFEBE8EE" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
 -->
-        <Border Grid.Column="1" Grid.Row="2" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="White" >
-            <FlowDocumentReader Name="documentViewer" Grid.Column="1" Grid.Row="2" ViewingMode="Scroll" IsFindEnabled="True" IsPrintEnabled="True" HorizontalAlignment="Center" />
+        <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="#FFBAB9BE" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="White" >
+            <FlowDocumentReader Name="documentViewer" ViewingMode="Scroll" IsFindEnabled="True" IsPrintEnabled="True" HorizontalAlignment="Center" IsTwoPageViewEnabled="False" IsManipulationEnabled="False"/>
         </Border>
 
     </Grid>
-    
+
 </UserControl>
